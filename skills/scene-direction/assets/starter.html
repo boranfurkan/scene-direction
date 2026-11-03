@@ -1,0 +1,479 @@
+<!doctype html>
+<!--
+  Starter for a scroll-driven 3D site (three.js r187, no build step). Infrastructure, not a layout:
+  the direction sheet (scripts/draw.mjs) decides the grounds, type, shots, copy placement and finish per scene.
+  Serve over http (`npx serve .` or `python3 -m http.server`); file:// blocks the CDN imports.
+
+  Replace: the <head> text, :root tokens and fonts, the header links, the scenes (copy, data-ground, data-shot,
+  data-copy, data-chapter, --len), FINISH, buildSubject() and the lights' colours.
+  Keep: the colour bridge (cssColor, untone), the renderer and finish pipeline, the shot camera, the one clock
+  (gsap.ticker drives Lenis, the 3D and the reveals), the intro, the copy fades, reduced motion, the quality steps.
+-->
+<html lang="en" data-ready="0">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Name: one line that says what this is</title>
+<meta name="description" content="One sentence a search result would show.">
+<meta name="theme-color" content="#1c2a33">
+<style>
+  :root {
+    --ink: #f4f1ea;
+    --ink-soft: rgb(244 241 234 / 0.78);
+    --accent: #f2b544;
+    --scrim: rgb(8 10 20 / 0.62);           /* a light direction uses rgb(255 255 255 / 0.6) with dark ink */
+    --ground-0: #1c2a33;                     /* the first scene's ground: the intro and the first paint use it */
+    --font-display: Georgia, 'Times New Roman', serif;
+    --font-text: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --font-label: ui-monospace, 'SF Mono', Menlo, monospace;
+    --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+  html, body { overflow-x: clip; }            /* a scrim or a wide word must never widen the page */
+  html { background: var(--ground-0); }
+  body { margin: 0; color: var(--ink); font-family: var(--font-text); background: var(--ground-0); -webkit-font-smoothing: antialiased; }
+  #stage { position: fixed; inset: 0; z-index: 0; }   /* full-bleed: the 3D owns the whole screen */
+  #stage canvas { display: block; width: 100%; height: 100%; }
+  main { position: relative; z-index: 1; }
+  .scene { position: relative; height: calc(var(--len, 1.6) * 100svh); }
+  .copy { position: sticky; top: 0; height: 100svh; box-sizing: border-box; display: flex; flex-direction: column; padding: 12svh 6vw 9svh; pointer-events: none; isolation: isolate; }
+  .copy > * { pointer-events: auto; }
+  .copy[data-copy="left"]   { justify-content: center; align-items: flex-start; }
+  .copy[data-copy="right"]  { justify-content: center; align-items: flex-end; text-align: right; }
+  .copy[data-copy="bottom"] { justify-content: flex-end; align-items: flex-start; }
+  .copy[data-copy="over"]   { justify-content: flex-start; align-items: center; text-align: center; padding-top: 16svh; }
+  .copy .block { position: relative; max-width: min(36rem, 40vw); }
+  .copy[data-copy="over"] .block, .copy[data-copy="bottom"] .block { max-width: min(46rem, 80vw); }
+  /* a soft scrim behind every copy block, from the side the copy sits on, so text reads over any shot;
+     soft top and bottom edges, so a scrim sliding in or out with its scene never draws a line across the screen */
+  .copy::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    -webkit-mask-image: linear-gradient(to bottom, transparent, #000 16svh, #000 calc(100% - 6svh), transparent);
+            mask-image: linear-gradient(to bottom, transparent, #000 16svh, #000 calc(100% - 6svh), transparent); }
+  .copy[data-copy="left"]::before   { background: linear-gradient(90deg, var(--scrim) 0%, var(--scrim) 30%, transparent 60%); }
+  .copy[data-copy="right"]::before  { background: linear-gradient(270deg, var(--scrim) 0%, var(--scrim) 30%, transparent 60%); }
+  .copy[data-copy="bottom"]::before { background: linear-gradient(0deg, var(--scrim) 0%, transparent 50%); }
+  .copy[data-copy="over"]::before   { background: radial-gradient(ellipse 70% 45% at 50% 26%, var(--scrim), transparent); }
+  h1, h2 { font-family: var(--font-display); font-weight: 400; line-height: 0.92; margin: 0 0 1.1rem; letter-spacing: -0.02em; text-wrap: balance; }
+  h1 { font-size: clamp(3.6rem, 11vw, 12rem); }
+  h2 { font-size: clamp(2.6rem, 7vw, 7.5rem); }
+  p { font-size: clamp(1rem, 1.2vw, 1.2rem); line-height: 1.55; color: var(--ink-soft); margin: 0; max-width: 34rem; text-wrap: pretty; }
+  .copy[data-copy="over"] p { margin: 0 auto; }
+  .label { font-family: var(--font-label); font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); margin: 0 0 1.2rem; }
+  .line-mask { padding-bottom: 0.08em; margin-bottom: -0.08em; }   /* SplitText line masks: room for descenders */
+
+  /* the chrome: a header, a scene index with progress, a footer line (references/chrome.md) */
+  .hud { position: fixed; inset: 0 0 auto 0; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 2rem; padding: 1.4rem 6vw; font-size: 0.9rem; isolation: isolate; }
+  /* a soft scrim under the chrome, so the header and the index read over any shot */
+  .hud::before, .index::before { content: ""; position: absolute; z-index: -1; pointer-events: none; }
+  .hud::before { inset: 0 0 -3.5rem 0; background: linear-gradient(180deg, var(--scrim), transparent); }
+  .hud a { color: var(--ink); text-decoration: none; }
+  .brand { font-family: var(--font-display); font-size: 1.25rem; letter-spacing: -0.01em; }
+  .hud nav { display: flex; gap: 1.6rem; margin-left: auto; }
+  .hud nav a { opacity: 0.85; transition: opacity 0.2s ease; }
+  .hud nav a[aria-current="true"] { opacity: 1; }
+  .cta { display: inline-flex; align-items: center; padding: 0.7em 1.15em; border-radius: 999px; background: var(--ink); color: var(--ground-0) !important; font-weight: 600; transition: transform 0.2s var(--ease-out); }
+  .index { position: fixed; left: 6vw; bottom: 3.2svh; z-index: 5; display: flex; align-items: center; gap: 0.8rem; font-family: var(--font-label); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-soft); isolation: isolate; }
+  .index::before { inset: -1.2rem -2rem; background: radial-gradient(closest-side, var(--scrim), transparent); }
+  .index .bar { width: 4.5rem; height: 1px; background: rgb(255 255 255 / 0.25); overflow: hidden; }
+  .index .bar i { display: block; height: 100%; background: var(--ink); transform-origin: left; transform: scaleX(0); }
+  .foot { margin-top: 2.2rem; font-family: var(--font-label); font-size: 0.75rem; letter-spacing: 0.06em; color: var(--ink-soft); }
+  .foot a { color: inherit; }
+  @media (hover: hover) and (pointer: fine) {
+    .hud nav a:hover { opacity: 1; }
+    .cta:hover { transform: translateY(-2px); }
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 4px; }
+
+  /* the intro: a short branded reveal while the scene loads and compiles (never longer than ~2 s once loaded) */
+  #intro { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: var(--ground-0); color: var(--ink); pointer-events: none; clip-path: inset(0 0 0% 0); }
+  #intro .name { font-family: var(--font-display); font-size: clamp(1.4rem, 3vw, 2.4rem); letter-spacing: -0.01em; }
+  #intro .count { position: absolute; right: 6vw; bottom: 5svh; font-family: var(--font-label); font-size: 0.8rem; letter-spacing: 0.08em; color: var(--ink-soft); }
+  .intro-done #intro { display: none; }
+
+  .grain { position: fixed; inset: -50%; z-index: 6; pointer-events: none; opacity: 0.06; mix-blend-mode: overlay; background-size: 160px; }
+
+  /* phones: copy sits low (with a soft scrim), the subject is lifted into the top of the screen */
+  @media (max-aspect-ratio: 1/1) {
+    .copy[data-copy] { justify-content: flex-end; align-items: flex-start; text-align: left; padding: 0 6vw 10svh; }
+    .copy .block, .copy[data-copy="over"] .block, .copy[data-copy="bottom"] .block { max-width: 100%; }
+    .copy[data-copy="over"] p { margin: 0; }
+    .copy[data-copy]::before { background: linear-gradient(0deg, var(--scrim) 0%, var(--scrim) 22%, transparent 60%); }
+    .hud { padding: 1.1rem 6vw; }
+    .hud nav { display: none; }
+    .index { bottom: 2.6svh; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+<!-- the fonts from the direction sheet: <link rel="preconnect" href="https://fonts.googleapis.com"> <link href="…" rel="stylesheet"> -->
+<script>
+  // a failsafe: if the module never runs (a CDN is down), the page is still readable
+  setTimeout(() => document.documentElement.classList.add('intro-done'), 6000);
+</script>
+</head>
+<body>
+<div id="intro" aria-hidden="true"><div class="name">Name</div><div class="count">0</div></div>
+<header class="hud">
+  <a class="brand" href="#top">Name</a>
+  <nav aria-label="Sections"><a href="#detail">Detail</a><a href="#above">From above</a></nav>
+  <a class="cta" href="#action">The action</a>
+</header>
+<div id="stage" aria-hidden="true"></div>
+<main id="top">
+  <section class="scene" id="hero" data-ground="#1c2a33" data-shot="hero" data-chapter="Name" style="--len: 1.6" aria-label="Introduction">
+    <div class="copy" data-copy="over"><div class="block"><h1>Name</h1><p>One line that says what this is.</p></div></div>
+  </section>
+  <section class="scene" id="detail" data-ground="#2b2622" data-shot="macro" data-chapter="Detail" style="--len: 1.8" aria-label="A detail">
+    <div class="copy" data-copy="left"><div class="block"><p class="label">01 · Detail</p><h2>A detail</h2><p>A macro shot: the camera pushes into one part on purpose.</p></div></div>
+  </section>
+  <section class="scene" id="above" data-ground="#22303a" data-shot="top" data-chapter="From above" style="--len: 1.8" aria-label="From above">
+    <div class="copy" data-copy="right"><div class="block"><p class="label">02 · Plan</p><h2>From above</h2><p>Each scene gets its own shot from the direction sheet.</p></div></div>
+  </section>
+  <section class="scene" id="action" data-ground="#3d2a24" data-shot="hero-low" data-chapter="The action" style="--len: 1.5" aria-label="The action">
+    <div class="copy" data-copy="bottom"><div class="block"><h2>The action</h2><p>Where the visit ends.</p>
+      <p class="foot">hello@example.com · City · © 2026</p></div></div>
+  </section>
+</main>
+<div class="index" aria-hidden="true"><span class="num">01</span><span class="bar"><i></i></span><span class="name">Name</span></div>
+<div class="grain" aria-hidden="true"></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.187.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/",
+  "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.187.0/examples/jsm/",
+  "postprocessing": "https://cdn.jsdelivr.net/npm/postprocessing@6.39.6/build/index.js",
+  "n8ao": "https://cdn.jsdelivr.net/npm/n8ao@2.0.1/dist/N8AO.js",
+  "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/index.js",
+  "gsap/": "https://cdn.jsdelivr.net/npm/gsap@3.15.0/",
+  "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.3.27/dist/lenis.mjs"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
+import { EffectComposer, RenderPass, EffectPass, BloomEffect, VignetteEffect, ToneMappingEffect, ToneMappingMode, SMAAEffect } from 'postprocessing';
+import { N8AOPostPass } from 'n8ao';
+import gsap from 'gsap';
+import { SplitText } from 'gsap/SplitText.js';
+import Lenis from 'lenis';
+gsap.registerPlugin(SplitText);
+
+// ---- the finish, from the direction sheet (references/finish.md)
+const FINISH = {
+  env: null,                  // a Poly Haven HDRI you downloaded (scripts/assets.mjs), e.g. 'assets/studio_small_08_1k.hdr'; null = a neutral room
+  envIntensity: 0.55,         // how much the environment lights and reflects; the key light still shapes the object
+  envRotation: 0,             // radians: turn the HDRI so its brightest window sits where the key light is
+  ao: 2.5,                    // contact shadow where things meet (N8AO); 0 = off
+  bloom: 0.3,                 // glow on what is brighter than the threshold: lamps, screens, sun on metal; 0 = off
+  bloomThreshold: 0.95,
+  vignette: 0.35,             // darkens the frame's edges; 0 = off
+  fog: 0,                     // 0 = off (object scenes); for a world, where the fog is complete in subject sizes. Never fog the subject itself
+  toneMapping: 'NEUTRAL',     // 'NEUTRAL' keeps the page colours exact; 'AGX' is filmic but shifts the grounds (judge by eye)
+};
+
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const finePointer = matchMedia('(hover: hover) and (pointer: fine)').matches;
+const stage = document.getElementById('stage');
+const scenes = [...document.querySelectorAll('.scene')];
+const copies = scenes.map((s) => s.querySelector('.copy'));
+
+// ---- colour: any CSS colour (hex, rgb, oklch) to a THREE.Color in the linear working space
+const probe = document.createElement('canvas').getContext('2d', { willReadFrequently: true });
+function cssColor(value) {
+  probe.clearRect(0, 0, 1, 1); probe.fillStyle = value; probe.fillRect(0, 0, 1, 1);
+  const [r, g, b] = probe.getImageData(0, 0, 1, 1).data;
+  return new THREE.Color().setRGB(r / 255, g / 255, b / 255, THREE.SRGBColorSpace);
+}
+// The canvas background is tone mapped like everything else. untone() returns the colour that comes out of
+// Neutral tone mapping as the CSS colour, so the 3D background matches the page exactly.
+function untone(c) {
+  const S = 0.76, D = 0.24, DES = 0.15, out = [c.r, c.g, c.b];
+  let c1 = out;
+  const top = Math.min(Math.max(...out), 0.995);
+  if (top >= S) {
+    const peak = (D * D) / (1 - top) - D + S, g = 1 - 1 / (DES * (peak - top) + 1);
+    c1 = out.map((v) => (v - g * top) / ((1 - g) * (top / peak)));
+  }
+  const m = Math.max(0, Math.min(...c1));
+  const x = m < 0.04 ? Math.sqrt(m / 6.25) : m + 0.04;       // undo the toe: min(out) = 6.25 x² (x < 0.08) or x - 0.04
+  const off = x - m;
+  return new THREE.Color(...c1.map((v) => Math.max(0, v + off)));
+}
+const grounds = scenes.map((s) => (FINISH.toneMapping === 'NEUTRAL' ? untone : (c) => c)(cssColor(s.dataset.ground)));
+
+// ---- renderer: opaque, tone mapping happens last in the finish pipeline
+const renderer = new THREE.WebGLRenderer({ antialias: false, powerPreference: 'high-performance', stencil: false });
+const DPRS = [Math.min(devicePixelRatio, 2), 1.5, 1.25, 1];
+let dprStep = 0;
+renderer.setPixelRatio(DPRS[0]);
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.NoToneMapping;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowMap;               // r187 removed PCFSoftShadowMap; soften with shadow.radius
+stage.appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = grounds[0].clone();
+const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 200);
+const small = matchMedia('(max-aspect-ratio: 1/1), (pointer: coarse)').matches;
+
+// ---- light rig from the palette (references/finish.md); the hemisphere follows each scene's ground
+const hemi = new THREE.HemisphereLight(0xffffff, 0x000000, 0.6);
+const key = new THREE.DirectionalLight(0xfff4e6, 2.2);
+key.position.set(3, 6, 4); key.castShadow = true; key.shadow.mapSize.setScalar(small ? 1024 : 2048); key.shadow.radius = 6; key.shadow.bias = -0.0005;
+const rim = new THREE.DirectionalLight(cssColor(getComputedStyle(document.documentElement).getPropertyValue('--accent')), 1.4);
+rim.position.set(-4, 2.5, -5);
+scene.add(hemi, key, rim);
+
+// ---- the subject: replace this placeholder with the subject's own object (references/object.md)
+function buildSubject() {
+  const group = new THREE.Group();
+  const shell = new THREE.MeshPhysicalMaterial({ color: cssColor('#b9b2a7'), roughness: 0.45, clearcoat: 0.3, clearcoatRoughness: 0.4 });
+  const body = new THREE.Mesh(new RoundedBoxGeometry(2.4, 0.5, 1.6, 6, 0.12), shell);
+  const knob = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.12, 48), new THREE.MeshStandardMaterial({ color: '#f2b544', roughness: 0.3, metalness: 1 }));
+  knob.position.set(0.7, 0.31, 0.3);
+  body.castShadow = body.receiveShadow = knob.castShadow = true;
+  group.add(body, knob);
+  return group;
+}
+const subject = buildSubject();
+scene.add(subject);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), new THREE.ShadowMaterial({ opacity: 0.22 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true;
+scene.add(floor);
+
+// ---- environment: a downloaded HDRI for light and reflections (never as the visible background), else a room
+async function loadEnvironment() {
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  let tex = null;
+  if (FINISH.env) {
+    try { const hdr = await new HDRLoader().loadAsync(FINISH.env); tex = pmrem.fromEquirectangular(hdr).texture; hdr.dispose(); }
+    catch (e) { console.warn('HDRI failed to load, using a room instead:', e.message); }
+  }
+  scene.environment = tex ?? pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environmentIntensity = FINISH.envIntensity;
+  scene.environmentRotation.y = FINISH.envRotation;
+  pmrem.dispose();
+}
+
+// ---- the finish: contact shadows, glow, vignette, tone mapping, anti-aliasing (references/finish.md)
+const composer = new EffectComposer(renderer, { frameBufferType: THREE.HalfFloatType });
+composer.addPass(new RenderPass(scene, camera));
+let ao = null;
+if (FINISH.ao > 0) {
+  ao = new N8AOPostPass(scene, camera, 1, 1);
+  ao.configuration.intensity = FINISH.ao;
+  ao.configuration.gammaCorrection = false;                  // later passes handle colour
+  ao.setQualityMode(small ? 'Low' : 'Medium');
+  composer.addPass(ao);
+}
+const effects = [];
+if (FINISH.bloom > 0) effects.push(new BloomEffect({ mipmapBlur: true, intensity: FINISH.bloom, luminanceThreshold: FINISH.bloomThreshold, luminanceSmoothing: 0.2, radius: 0.7 }));
+if (FINISH.vignette > 0) effects.push(new VignetteEffect({ offset: 0.3, darkness: FINISH.vignette }));
+effects.push(new ToneMappingEffect({ mode: ToneMappingMode[FINISH.toneMapping] ?? ToneMappingMode.NEUTRAL }));
+composer.addPass(new EffectPass(camera, ...effects));
+composer.addPass(new EffectPass(camera, new SMAAEffect()));
+
+// ---- shots (references/scenes-and-motion.md). dir: where the camera sits, seen from the subject.
+// fill: how much of the frame the subject takes (1 = touching the edges; above 1 is a deliberate crop).
+// focus: for a macro, the detail to look at, as a fraction of the subject's size from its centre.
+const SHOTS = {
+  hero:        { dir: [0.9, 0.55, 1.2],  fill: 0.68 },
+  'hero-low':  { dir: [0.85, 0.1, 1.25], fill: 0.76 },
+  side:        { dir: [1, 0.08, 0.02],   fill: 0.82 },
+  top:         { dir: [0.02, 1, 0.16],   fill: 0.72 },
+  underside:   { dir: [0.35, -0.8, 0.55], fill: 0.7 },
+  macro:       { dir: [0.75, 0.5, 1],    fill: 2.4, focus: [0.29, 0.12, 0.19] },
+  wide:        { dir: [0.9, 0.62, 1.3],  fill: 0.34 },
+};
+// path: the camera travels THROUGH the world instead of framing the subject (places, journeys, rooms).
+// ROUTE_POINTS: the route in world units, e.g. along the river, up the terraces, through the door. null = an arc
+// past the subject (a placeholder). Path scenes share the route in order, or set data-route="0.2-0.55".
+const ROUTE_POINTS = null;
+// ROUTE_LOOK: where the camera looks while it travels: 'subject' (keeps the subject in view), 'ahead' (along the
+// route, for a journey through a world), or a second list of points the look target travels along.
+const ROUTE_LOOK = 'subject';
+// copy placement shifts the rendered image away from the copy (fractions of the screen)
+const OFFSET = { wide: { left: [-0.2, 0], right: [0.2, 0], bottom: [0, 0.14], over: [0, -0.14] }, tall: { left: [0, 0.17], right: [0, 0.17], bottom: [0, 0.17], over: [0, 0.17] } };
+
+const box = new THREE.Box3(), center = new THREE.Vector3(), size = new THREE.Vector3();
+function frameShot(name, aspect) {
+  const shot = SHOTS[name] ?? (console.warn(`unknown shot "${name}", using wide`), SHOTS.wide);
+  const d = new THREE.Vector3(...shot.dir).normalize();
+  const worldUp = Math.abs(d.y) > 0.98 ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 1, 0);
+  const right = new THREE.Vector3().crossVectors(worldUp, d).normalize();
+  const up = new THREE.Vector3().crossVectors(d, right);
+  const tv = Math.tan(THREE.MathUtils.degToRad(camera.fov) / 2), th = tv * aspect, margin = 1 / shot.fill;
+  let dist = 0;
+  for (const x of [box.min.x, box.max.x]) for (const y of [box.min.y, box.max.y]) for (const z of [box.min.z, box.max.z]) {
+    const v = new THREE.Vector3(x, y, z).sub(center), depth = v.dot(d);
+    dist = Math.max(dist, depth + (Math.abs(v.dot(right)) * margin) / th, depth + (Math.abs(v.dot(up)) * margin) / tv);
+  }
+  const look = center.clone();
+  if (shot.focus) look.add(new THREE.Vector3(...shot.focus).multiply(size));
+  return { pos: look.clone().addScaledVector(d, dist), look, up: worldUp };
+}
+
+let framed = [], offsets = [], route = null, lookRoute = null, routeSpan = [], routeLen = 1;
+const UP = new THREE.Vector3(0, 1, 0), ahead = new THREE.Vector3();
+// the camera pose for scene n at progress p: a framed shot, or a point on the route looking ahead along it
+function pose(n, p) {
+  const span = routeSpan[n];
+  if (!span) return framed[n];
+  const t = clamp(span[0] + (span[1] - span[0]) * p), pos = route.getPointAt(t);
+  if (lookRoute) return { pos, look: lookRoute.getPointAt(t), up: UP };
+  if (ROUTE_LOOK === 'subject') return { pos, look: center.clone(), up: UP };
+  ahead.copy(route.getTangentAt(t)).multiplyScalar(routeLen * 0.08);
+  return { pos, look: pos.clone().add(ahead).addScaledVector(UP, -routeLen * 0.012), up: UP };
+}
+function resize() {
+  const w = stage.clientWidth, h = stage.clientHeight, aspect = w / h;
+  renderer.setPixelRatio(DPRS[dprStep]);
+  composer.setSize(w, h, false);
+  camera.aspect = aspect;
+  box.setFromObject(subject); box.getCenter(center); box.getSize(size);
+  floor.position.y = box.min.y - 0.001;
+  const s = Math.max(size.x, size.y, size.z);
+  Object.assign(key.shadow.camera, { left: -2 * s, right: 2 * s, top: 2 * s, bottom: -2 * s, near: 0.1, far: 40 }); key.shadow.camera.updateProjectionMatrix();
+  if (ao) { ao.configuration.aoRadius = s * 0.35; ao.configuration.distanceFalloff = s * 0.1; }
+  if (FINISH.fog > 0) scene.fog = new THREE.Fog(grounds[0].clone(), s * 1.5, s * FINISH.fog);
+  // on phones the copy takes the lower part, so frame the subject as if the screen were a little wider
+  framed = scenes.map((sc) => (sc.dataset.shot === 'path' ? null : frameShot(sc.dataset.shot, (SHOTS[sc.dataset.shot]?.fill ?? 0) > 1 || aspect > 1 ? aspect : aspect * 1.25)));
+  const arc = [[-2.2, 0.9, 2.6], [-0.9, 0.5, 1.6], [0.7, 0.35, 1.3], [1.9, 0.6, 0.2]].map(([x, y, z]) => [center.x + x * s, center.y + y * s, center.z + z * s]);
+  route = new THREE.CatmullRomCurve3((ROUTE_POINTS ?? arc).map((q) => new THREE.Vector3(...q)));
+  routeLen = route.getLength();
+  lookRoute = Array.isArray(ROUTE_LOOK) ? new THREE.CatmullRomCurve3(ROUTE_LOOK.map((q) => new THREE.Vector3(...q))) : null;
+  const paths = scenes.filter((sc) => sc.dataset.shot === 'path');
+  routeSpan = scenes.map((sc) => (sc.dataset.shot !== 'path' ? null : sc.dataset.route ? sc.dataset.route.split('-').map(Number)
+    : [paths.indexOf(sc) / paths.length, (paths.indexOf(sc) + 1) / paths.length]));
+  offsets = copies.map((c) => (aspect > 1 ? OFFSET.wide : OFFSET.tall)[c.dataset.copy] ?? [0, 0]);
+}
+new ResizeObserver(resize).observe(stage);
+resize();
+
+// ---- smooth wheel scrolling (Lenis) on desktop; touch scrolling stays native; off for reduced motion
+const lenis = reduced ? null : new Lenis({ autoRaf: false, anchors: true });
+
+// ---- the statements: lines rise out of a mask the first time their scene arrives (references/motion-and-type.md)
+const revealed = new Set();
+const reveals = copies.map((c, n) => {
+  if (reduced) return null;
+  const head = c.querySelector('h1, h2'), rest = [...c.querySelectorAll('.block > :not(h1):not(h2)')];
+  if (!head) return null;
+  const split = SplitText.create(head, { type: n === 0 ? 'lines, chars' : 'lines', mask: 'lines', linesClass: 'line', autoSplit: true,
+    onSplit: (self) => gsap.set(n === 0 ? self.chars : self.lines, { yPercent: revealed.has(n) ? 0 : 110 }) });
+  gsap.set(rest, { autoAlpha: 0, y: 14 });
+  return { split, rest };
+});
+function reveal(n, delay = 0) {
+  const r = reveals[n];
+  if (!r || revealed.has(n)) return;
+  revealed.add(n);
+  const first = n === 0;
+  gsap.to(first ? r.split.chars : r.split.lines, { yPercent: 0, duration: first ? 1.2 : 1.0, ease: 'expo.out', stagger: first ? 0.028 : 0.08, delay });
+  gsap.to(r.rest, { autoAlpha: 1, y: 0, duration: 0.8, ease: 'power3.out', stagger: 0.06, delay: delay + (first ? 0.45 : 0.25) });
+}
+
+// ---- the chrome follows the active scene
+const indexNum = document.querySelector('.index .num'), indexName = document.querySelector('.index .name'), indexBar = document.querySelector('.index .bar i');
+const navLinks = [...document.querySelectorAll('.hud nav a')];
+function setActive(i) {
+  indexNum.textContent = String(i + 1).padStart(2, '0');
+  indexName.textContent = scenes[i].dataset.chapter ?? '';
+  const id = scenes[i].id;
+  navLinks.forEach((a) => a.setAttribute('aria-current', a.getAttribute('href') === `#${id}` ? 'true' : 'false'));
+}
+
+// ---- pointer: a small camera drift toward the pointer on desktop, so the hold is alive
+const pointer = { x: 0, y: 0, tx: 0, ty: 0 };
+if (finePointer && !reduced) addEventListener('pointermove', (e) => { pointer.tx = (e.clientX / innerWidth) * 2 - 1; pointer.ty = (e.clientY / innerHeight) * 2 - 1; });
+
+// ---- the loop: one clock (gsap.ticker) drives Lenis, the camera, the copy fades and the render
+const ease = (t) => t * t * (3 - 2 * t);
+const damp = (rate, dt) => 1 - Math.pow(1 - rate, dt * 60);   // frame-rate independent smoothing
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+const cam = { pos: pose(0, 0).pos.clone(), look: pose(0, 0).look.clone(), ox: offsets[0][0], oy: offsets[0][1] };
+const intro = { t: reduced ? 1 : 0 };                       // 0 → 1: the camera settles in from further out
+let smoothY = scrollY, active = -1, slow = 0;
+const bg = new THREE.Color(), tmp = new THREE.Vector3(), right = new THREE.Vector3();
+const HEMI_SKY = new THREE.Color(1, 1, 1), HEMI_DIRT = new THREE.Color(0, 0, 0);
+
+function frame(time, dt) {
+  lenis?.raf(time * 1000);
+  smoothY = reduced ? scrollY : smoothY + (scrollY - smoothY) * damp(lenis ? 0.35 : 0.12, dt);
+  const H = innerHeight, mid = smoothY + H / 2;
+  let i = scenes.findIndex((s) => mid >= s.offsetTop && mid < s.offsetTop + s.offsetHeight);
+  if (i < 0) i = mid < scenes[0].offsetTop ? 0 : scenes.length - 1;
+  const s = scenes[i], p = clamp((smoothY - s.offsetTop) / Math.max(1, s.offsetHeight - H));
+  if (i !== active) { active = i; setActive(i); if (intro.t >= 1 || i > 0) reveal(i); }
+  // hold this scene's shot, then travel to the next scene's shot over the last 35% of the scene
+  const j = Math.min(i + 1, scenes.length - 1), k = reduced ? 0 : ease(clamp((p - 0.65) / 0.35));
+  // a path scene flies its part of the route as the visitor scrolls; reduced motion holds its midpoint
+  const A = pose(i, reduced ? 0.5 : p), B = pose(j, 0);
+  const pos = A.pos.clone().lerp(B.pos, k), look = A.look.clone().lerp(B.look, k);
+  const ox = offsets[i][0] + (offsets[j][0] - offsets[i][0]) * k, oy = offsets[i][1] + (offsets[j][1] - offsets[i][1]) * k;
+  // the intro: start further out and settle in
+  const dist = pos.distanceTo(look);
+  pos.sub(look).multiplyScalar(1 + 0.55 * (1 - ease(intro.t))).add(look);
+  // pointer drift, a few percent of the distance
+  pointer.x += (pointer.tx - pointer.x) * damp(0.05, dt); pointer.y += (pointer.ty - pointer.y) * damp(0.05, dt);
+  if (pointer.x || pointer.y) {
+    right.subVectors(look, pos).cross(camera.up).normalize();
+    pos.addScaledVector(right, pointer.x * dist * 0.035).addScaledVector(camera.up, -pointer.y * dist * 0.025);
+  }
+  const r = reduced ? 1 : damp(0.07, dt);
+  cam.pos.lerp(pos, r); cam.look.lerp(look, r); cam.ox += (ox - cam.ox) * r; cam.oy += (oy - cam.oy) * r;
+  camera.position.copy(cam.pos); camera.up.copy(k > 0.5 ? B.up : A.up); camera.lookAt(cam.look);
+  const w = stage.clientWidth, h = stage.clientHeight;
+  camera.setViewOffset(w, h, cam.ox * w, cam.oy * h, w, h);
+  // the background, fog and hemisphere take the colour of the scene's ground
+  bg.copy(grounds[i]).lerp(grounds[j], k);
+  scene.background.copy(bg);
+  if (scene.fog) scene.fog.color.copy(bg);
+  hemi.color.copy(bg).lerp(HEMI_SKY, 0.75); hemi.groundColor.copy(bg).lerp(HEMI_DIRT, 0.4);
+  // a small idle motion so the hold is alive, never a spin
+  subject.rotation.y = reduced ? 0 : Math.sin(time / 3.2) * 0.05;
+  // each statement stays on screen for its whole scene: it fades in as its scene rises into view and fades
+  // out only at the hand-over, when the next scene's top passes the middle of the screen
+  scenes.forEach((sc, n) => {
+    const top = sc.offsetTop - smoothY, bottom = top + sc.offsetHeight;
+    const fadeIn = n === 0 ? 1 : ease(clamp((0.55 * H - top) / (0.4 * H)));
+    const fadeOut = n === scenes.length - 1 ? 1 : ease(clamp((bottom - 0.45 * H) / (0.4 * H)));
+    copies[n].style.opacity = reduced ? 1 : (fadeIn * fadeOut).toFixed(3);
+  });
+  indexBar.style.transform = `scaleX(${clamp(smoothY / Math.max(1, document.documentElement.scrollHeight - H)).toFixed(4)})`;
+  composer.render(dt);
+  // quality steps: if frames stay slow, render fewer pixels (never below 1×)
+  if (dt > 1 / 45 && dt < 0.25) slow++; else slow = Math.max(0, slow - 0.25);
+  if (slow > 90 && dprStep < DPRS.length - 1) { dprStep++; slow = 0; resize(); }
+}
+
+// ---- start: load, compile the shaders, then a short branded reveal
+const count = document.querySelector('#intro .count');
+THREE.DefaultLoadingManager.onProgress = (_, loaded, total) => { count.textContent = Math.round((100 * loaded) / Math.max(1, total)); };
+await Promise.race([loadEnvironment(), new Promise((r) => setTimeout(r, 4000))]);
+await document.fonts.ready;
+await renderer.compileAsync(scene, camera).catch(() => {});
+gsap.ticker.lagSmoothing(0);
+gsap.ticker.add((time, deltaMs) => frame(time, Math.min(0.1, deltaMs / 1000)));
+const done = () => { document.documentElement.classList.add('intro-done'); document.documentElement.dataset.ready = '1'; };
+if (reduced) { count.textContent = '100'; done(); }
+else {
+  const tl = gsap.timeline({ onComplete: done });
+  tl.to(count, { textContent: 100, duration: 0.35, snap: { textContent: 1 } })
+    .to('#intro', { clipPath: 'inset(0 0 100% 0)', duration: 0.9, ease: 'expo.inOut' }, '+=0.1')
+    .to(intro, { t: 1, duration: 1.6, ease: 'power3.out' }, '<0.15')
+    .add(() => reveal(0), '<0.2')
+    .from('.hud, .index', { autoAlpha: 0, duration: 0.8, ease: 'power2.out' }, '<0.5');
+}
+
+// ---- grain: a small noise tile drawn once
+const n = document.createElement('canvas'); n.width = n.height = 128;
+const g = n.getContext('2d'), img = g.createImageData(128, 128);
+for (let q = 0; q < img.data.length; q += 4) { const v = Math.random() * 255; img.data[q] = img.data[q + 1] = img.data[q + 2] = v; img.data[q + 3] = 255; }
+g.putImageData(img, 0, 0);
+document.querySelector('.grain').style.backgroundImage = `url(${n.toDataURL()})`;
+</script>
+</body>
+</html>

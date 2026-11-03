@@ -1,0 +1,1062 @@
+[
+ {
+  "id": "night-gallery",
+  "name": "Night gallery",
+  "for": [
+   "person",
+   "maker",
+   "collection",
+   "art",
+   "object"
+  ],
+  "mood": "A dark, warm room after hours. Each piece stands in its own pool of light, and the camera glides between them.",
+  "world": "plinths, a floor that takes soft reflections, pools of light; the collection is visible beyond the hero piece",
+  "light": {
+   "rig": "two or three SpotLights with penumbra 0.6 from above, warm key, faint cool rim",
+   "key": "#ffd7a3",
+   "rim": "#9fb4ff",
+   "hemiSky": "#3a2f28",
+   "hemiGround": "#0d0a08",
+   "fog": true,
+   "toneMapping": "AgX",
+   "exposure": 1.05
+  },
+  "grounds": [
+   "oklch(0.18 0.02 60)",
+   "oklch(0.16 0.025 35)",
+   "oklch(0.2 0.02 85)",
+   "oklch(0.15 0.03 260)",
+   "oklch(0.19 0.025 20)",
+   "oklch(0.17 0.02 60)"
+  ],
+  "ink": "#f1e9dc",
+  "accent": "#e3a857",
+  "type": {
+   "display": "Gloock",
+   "text": "Instrument Sans",
+   "label": null,
+   "scale": "display clamp(3.5rem, 9vw, 10rem), text 17px, generous leading"
+  },
+  "shots": [
+   "hero-low",
+   "macro",
+   "wide",
+   "side",
+   "top",
+   "hero"
+  ],
+  "copy": [
+   "left",
+   "over",
+   "right",
+   "bottom",
+   "left",
+   "over"
+  ],
+  "motion": "slow glides (damping 0.06), long holds, nothing bounces",
+  "texture": "grain 6%, a soft CSS vignette",
+  "signature": "the first frame: one piece in a pool of light, the name set huge beside it",
+  "avoid": [
+   "museum clichés (velvet ropes, gold frames)",
+   "more than one spotlight colour",
+   "a black void: the floor must catch light"
+  ],
+  "seenIn": [
+   "Cartier Watches & Wonders 2026 (one room per piece)",
+   "a blind-test winner: a ceramics portfolio as a dark gallery with the collection on a table"
+  ],
+  "finish": {
+   "hdri": [
+    "brown_photostudio_01",
+    "studio_small_03"
+   ],
+   "envIntensity": 0.35,
+   "ao": 3,
+   "bloom": 0.4,
+   "bloomThreshold": 0.9,
+   "vignette": 0.5,
+   "fog": 12,
+   "toneMapping": "AGX"
+  },
+  "assets": {
+   "fidelity": "photoreal",
+   "props": [
+    "vase",
+    "bench"
+   ],
+   "surfaces": [
+    "concrete floor",
+    "plaster"
+   ]
+  }
+ },
+ {
+  "id": "product-noir",
+  "name": "Product noir",
+  "for": [
+   "product",
+   "gear",
+   "launch",
+   "tech"
+  ],
+  "mood": "A deep studio gradient, rim light carving the silhouette, enormous condensed type behind the product.",
+  "world": "no room: a gradient ground, a soft floor shadow, type as architecture",
+  "light": {
+   "rig": "strong rim pair behind, a soft key in front, RoomEnvironment at 0.4 for reflections",
+   "key": "#ffffff",
+   "rim": "#7fb2ff",
+   "hemiSky": "#22304a",
+   "hemiGround": "#05070c",
+   "fog": false,
+   "toneMapping": "Neutral",
+   "exposure": 1.1
+  },
+  "grounds": [
+   "oklch(0.2 0.05 255)",
+   "oklch(0.16 0.04 250)",
+   "oklch(0.22 0.06 240)",
+   "oklch(0.14 0.035 265)",
+   "oklch(0.18 0.05 230)",
+   "oklch(0.2 0.05 255)"
+  ],
+  "ink": "#eef3ff",
+  "accent": "#3fa9ff",
+  "type": {
+   "display": "Big Shoulders Display",
+   "text": "Inter Tight",
+   "label": null,
+   "scale": "display set in caps at clamp(4rem, 14vw, 16rem), allowed behind the product; numbers set huge"
+  },
+  "shots": [
+   "hero",
+   "macro",
+   "underside",
+   "side",
+   "top",
+   "hero-low"
+  ],
+  "copy": [
+   "bottom",
+   "left",
+   "right",
+   "left",
+   "over",
+   "bottom"
+  ],
+  "motion": "confident, quick in-out (power3), the product snaps into each pose and holds",
+  "texture": "grain 5%",
+  "signature": "the product huge on the first screen, cut through by a giant word",
+  "avoid": [
+   "three round buttons on a grey floor",
+   "a slow endless spin",
+   "neon everywhere: one accent"
+  ],
+  "seenIn": [
+   "a blind-test winner: a shoe launch with a different hero angle per feature (sole-up for grip)",
+   "Oryzo by Lusion (one object, Z-axis camera)"
+  ],
+  "finish": {
+   "hdri": [
+    "studio_small_03",
+    "ferndale_studio_06"
+   ],
+   "envIntensity": 0.45,
+   "ao": 2.5,
+   "bloom": 0.35,
+   "bloomThreshold": 0.92,
+   "vignette": 0.5,
+   "fog": 0,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "photoreal",
+   "props": [],
+   "surfaces": [
+    "concrete",
+    "marble"
+   ]
+  }
+ },
+ {
+  "id": "golden-hour",
+  "name": "Golden hour",
+  "for": [
+   "place",
+   "hospitality",
+   "travel",
+   "outdoor"
+  ],
+  "mood": "A small world at sunset. Long shadows, warm windows, and the page moves from late afternoon to dusk.",
+  "world": "a diorama: land, the building, a path, a few hero props (a cable car, trees, a boat), lit windows",
+  "light": {
+   "rig": "low warm sun (DirectionalLight 8-12 degrees above the horizon) with long shadows, a cool sky fill",
+   "key": "#ffb36b",
+   "rim": "#ffd9a6",
+   "hemiSky": "#f6a35f",
+   "hemiGround": "#2a2f3a",
+   "fog": true,
+   "toneMapping": "AgX",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.68 0.13 55)",
+   "oklch(0.58 0.13 45)",
+   "oklch(0.47 0.11 30)",
+   "oklch(0.36 0.08 350)",
+   "oklch(0.27 0.06 285)",
+   "oklch(0.22 0.05 270)"
+  ],
+  "ink": "#fff6ec",
+  "accent": "#ffd37a",
+  "type": {
+   "display": "Fraunces",
+   "text": "Inter",
+   "label": null,
+   "scale": "display clamp(3rem, 8vw, 8.5rem) with an italic accent word, text 17px"
+  },
+  "shots": [
+   "wide",
+   "path",
+   "hero",
+   "macro",
+   "wide",
+   "hero-low"
+  ],
+  "copy": [
+   "left",
+   "over",
+   "right",
+   "bottom",
+   "left",
+   "over"
+  ],
+  "motion": "the camera travels (a CatmullRom path), the sun sinks with the scroll",
+  "texture": "grain 7%",
+  "signature": "the first frame: the whole place, small and complete, in warm light",
+  "avoid": [
+   "a plain green hill",
+   "noon light: flat and shadowless",
+   "stars or aurora as filler",
+   "milk: fog or haze over the subject; every frame needs a true dark and a saturated colour"
+  ],
+  "seenIn": [
+   "a blind-test winner: a mountain hut at sunset with a cable car and lit windows",
+   "Explore Primland (terrain flythrough)"
+  ],
+  "finish": {
+   "hdri": [
+    "kloppenheim_06",
+    "belfast_sunset"
+   ],
+   "envIntensity": 0.8,
+   "ao": 2,
+   "bloom": 0.5,
+   "bloomThreshold": 0.88,
+   "vignette": 0.3,
+   "fog": 14,
+   "toneMapping": "AGX"
+  },
+  "assets": {
+   "fidelity": "either",
+   "props": [
+    "tree",
+    "rock",
+    "shrub"
+   ],
+   "surfaces": [
+    "grass",
+    "dirt",
+    "gravel"
+   ]
+  }
+ },
+ {
+  "id": "toy-box",
+  "name": "Toy box",
+  "for": [
+   "person",
+   "developer",
+   "brand",
+   "playful",
+   "studio"
+  ],
+  "mood": "Bold scene colours, chunky bevelled things with stickers and labels, soft shadows, and pops that make you smile.",
+  "world": "a desk-scale world of the subject's real artefacts (a laptop, stickers, a keyboard, tickets), a colour world per scene",
+  "light": {
+   "rig": "a palette-tinted hemisphere, a white key with a soft shadow, an accent rim",
+   "key": "#ffffff",
+   "rim": "var(--accent)",
+   "hemiSky": "ground mixed 75% to white",
+   "hemiGround": "ground mixed 40% to black",
+   "fog": false,
+   "toneMapping": "Neutral",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.5 0.085 287)",
+   "oklch(0.46 0.11 345)",
+   "oklch(0.48 0.1 262)",
+   "oklch(0.46 0.06 192)",
+   "oklch(0.46 0.075 132)",
+   "oklch(0.52 0.15 32)"
+  ],
+  "ink": "#f3f0fa",
+  "accent": "#c9f07a",
+  "type": {
+   "display": "Bricolage Grotesque",
+   "text": "Instrument Sans",
+   "label": "JetBrains Mono",
+   "scale": "condensed bold display at clamp(3.5rem, 11vw, 12rem), a serif italic for asides, mono for tags"
+  },
+  "shots": [
+   "hero",
+   "top",
+   "macro",
+   "hero-low",
+   "side",
+   "wide"
+  ],
+  "copy": [
+   "over",
+   "left",
+   "right",
+   "bottom",
+   "over",
+   "left"
+  ],
+  "motion": "springy pops (back.out(1.6)) for drops and stickers, smooth damped scroll for the camera",
+  "texture": "grain 8%, a dot grid on the ground",
+  "signature": "the subject's own object covered in its real stickers, on the first screen",
+  "avoid": [
+   "random emoji",
+   "pastel mush: grounds keep the same lightness, change the hue",
+   "stickers that are not the subject's own"
+  ],
+  "seenIn": [
+   "furkanboran.info (the laptop with stickers, a colour world per scene)"
+  ],
+  "finish": {
+   "hdri": [
+    "studio_kontrast_04",
+    "pav_studio_03"
+   ],
+   "envIntensity": 0.9,
+   "ao": 2.5,
+   "bloom": 0.2,
+   "bloomThreshold": 0.98,
+   "vignette": 0.15,
+   "fog": 0,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "stylised",
+   "props": [],
+   "surfaces": []
+  }
+ },
+ {
+  "id": "daylight-still-life",
+  "name": "Daylight still life",
+  "for": [
+   "maker",
+   "craft",
+   "food",
+   "person",
+   "object"
+  ],
+  "mood": "A sunlit table by a window. The object photographed like a still life, with paper grounds and quiet serif type.",
+  "world": "a tabletop, a window-light shadow (a cookie or a gobo pattern), a few honest props from the subject's world",
+  "light": {
+   "rig": "a soft key from one side like a window (DirectionalLight + radius 8 shadows), a pale fill, no rim",
+   "key": "#fff3e0",
+   "rim": null,
+   "hemiSky": "#f7f1e6",
+   "hemiGround": "#b9a993",
+   "fog": false,
+   "toneMapping": "Neutral",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.95 0.015 85)",
+   "oklch(0.92 0.025 70)",
+   "oklch(0.9 0.03 140)",
+   "oklch(0.94 0.02 30)",
+   "oklch(0.9 0.025 250)",
+   "oklch(0.95 0.015 85)"
+  ],
+  "ink": "#1d1a16",
+  "accent": "#b4522e",
+  "type": {
+   "display": "Young Serif",
+   "text": "Instrument Sans",
+   "label": null,
+   "scale": "display clamp(3rem, 7vw, 7.5rem), text 18px, wide margins"
+  },
+  "shots": [
+   "hero",
+   "macro",
+   "top",
+   "side",
+   "wide",
+   "hero-low"
+  ],
+  "copy": [
+   "left",
+   "right",
+   "bottom",
+   "left",
+   "right",
+   "bottom"
+  ],
+  "motion": "gentle: the light moves across the table with the scroll, the object turns slowly between beats",
+  "texture": "paper grain 5%",
+  "signature": "the object in raking window light, its texture visible",
+  "avoid": [
+   "plastic gloss on handmade things",
+   "a cream-and-terracotta cliché palette without a reason from the subject",
+   "milk: fog or haze over the subject; every frame needs a true dark and a saturated colour"
+  ],
+  "seenIn": [
+   "product photography conventions: window light, a reflector, a flat lay from above"
+  ],
+  "finish": {
+   "hdri": [
+    "lebombo",
+    "photo_studio_broadway_hall"
+   ],
+   "envIntensity": 0.9,
+   "ao": 3,
+   "bloom": 0.15,
+   "bloomThreshold": 0.97,
+   "vignette": 0.2,
+   "fog": 0,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "photoreal",
+   "props": [
+    "vase",
+    "book",
+    "plant",
+    "cup"
+   ],
+   "surfaces": [
+    "wood table",
+    "linen",
+    "plaster"
+   ]
+  }
+ },
+ {
+  "id": "blueprint",
+  "name": "Blueprint",
+  "for": [
+   "product",
+   "engineering",
+   "hardware",
+   "tech"
+  ],
+  "mood": "The object as an engineering drawing come alive: exploded parts, callouts with real numbers, a cool technical palette.",
+  "world": "a measured grid, leader lines from parts to labels, the assembly separating and rejoining",
+  "light": {
+   "rig": "even, cool studio light with an environment for edges; flat-ish so the parts read",
+   "key": "#f3f7ff",
+   "rim": "#9cc3ff",
+   "hemiSky": "#d8e2f0",
+   "hemiGround": "#2b3442",
+   "fog": false,
+   "toneMapping": "Neutral",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.3 0.04 250)",
+   "oklch(0.26 0.05 240)",
+   "oklch(0.34 0.03 230)",
+   "oklch(0.22 0.04 255)",
+   "oklch(0.3 0.04 250)",
+   "oklch(0.26 0.05 240)"
+  ],
+  "ink": "#e9f0fb",
+  "accent": "#ffb547",
+  "type": {
+   "display": "IBM Plex Sans Condensed",
+   "text": "IBM Plex Sans Condensed",
+   "label": "IBM Plex Mono",
+   "scale": "display bold clamp(3rem, 8vw, 8rem), numbers in mono with units"
+  },
+  "shots": [
+   "hero",
+   "side",
+   "top",
+   "macro",
+   "wide",
+   "hero"
+  ],
+  "copy": [
+   "right",
+   "left",
+   "over",
+   "bottom",
+   "right",
+   "left"
+  ],
+  "motion": "precise: parts slide apart on rails (linear in, ease out), labels draw their leader lines",
+  "texture": "a faint blueprint grid in CSS",
+  "signature": "the exploded view, every part labelled with a real figure",
+  "avoid": [
+   "fake numbers",
+   "labels that collide (declutter them)",
+   "a sci-fi HUD"
+  ],
+  "seenIn": [
+   "engineering cutaway drawings",
+   "Shopify Editions (depth-layered panels)"
+  ],
+  "finish": {
+   "hdri": [
+    "studio_kontrast_04",
+    "studio_small_08"
+   ],
+   "envIntensity": 0.8,
+   "ao": 1.5,
+   "bloom": 0,
+   "bloomThreshold": 1,
+   "vignette": 0.15,
+   "fog": 0,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "stylised",
+   "props": [],
+   "surfaces": []
+  }
+ },
+ {
+  "id": "monolith",
+  "name": "Monolith",
+  "for": [
+   "brand",
+   "corporate",
+   "finance",
+   "ai",
+   "real-estate"
+  ],
+  "mood": "A single glowing form over a dark, reflective landscape. The cursor reveals detail, and the scale feels architectural.",
+  "world": "a reflective ground plane, low fog, one monumental object; small human-scale details for scale",
+  "light": {
+   "rig": "the object is the light source (emissive + a point light), a faint moon fill",
+   "key": "#cfe0ff",
+   "rim": "#ffffff",
+   "hemiSky": "#1b2236",
+   "hemiGround": "#020305",
+   "fog": true,
+   "toneMapping": "AgX",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.13 0.02 250)",
+   "oklch(0.15 0.03 230)",
+   "oklch(0.11 0.02 280)",
+   "oklch(0.16 0.03 210)",
+   "oklch(0.13 0.02 250)",
+   "oklch(0.12 0.02 260)"
+  ],
+  "ink": "#e8eef8",
+  "accent": "#a9c7ff",
+  "type": {
+   "display": "Familjen Grotesk",
+   "text": "Inter",
+   "label": null,
+   "scale": "display clamp(3rem, 8vw, 9rem), tight tracking"
+  },
+  "shots": [
+   "wide",
+   "hero-low",
+   "macro",
+   "side",
+   "wide",
+   "hero"
+  ],
+  "copy": [
+   "bottom",
+   "left",
+   "over",
+   "right",
+   "bottom",
+   "over"
+  ],
+  "motion": "slow, heavy (damping 0.05); the cursor tilts the light, not the camera",
+  "texture": "grain 6%",
+  "signature": "the monolith small in a vast dark landscape on the first frame",
+  "avoid": [
+   "a glowing orb (it is the default)",
+   "bloom on everything: only the form glows"
+  ],
+  "seenIn": [
+   "Hubtown by Unseen Studio (a glowing monolith over a reflective landscape)"
+  ],
+  "finish": {
+   "hdri": [
+    "kloppenheim_07",
+    "moonless_golf"
+   ],
+   "envIntensity": 0.3,
+   "ao": 2,
+   "bloom": 0.6,
+   "bloomThreshold": 0.85,
+   "vignette": 0.45,
+   "fog": 10,
+   "toneMapping": "AGX"
+  },
+  "assets": {
+   "fidelity": "either",
+   "props": [
+    "rock",
+    "boulder"
+   ],
+   "surfaces": [
+    "asphalt",
+    "sand",
+    "rock ground"
+   ]
+  }
+ },
+ {
+  "id": "fog-flyover",
+  "name": "Fog flyover",
+  "for": [
+   "place",
+   "outdoor",
+   "nature",
+   "travel"
+  ],
+  "mood": "A cool morning flight over terrain. Fog in the page colour, and the camera banks along a route.",
+  "world": "terrain from noise, a river or road as a line of light, the destination reached at the end",
+  "light": {
+   "rig": "a pale low sun, strong fog in the ground colour, a soft sky hemisphere",
+   "key": "#fff1dc",
+   "rim": null,
+   "hemiSky": "#dfe7ef",
+   "hemiGround": "#5d6b63",
+   "fog": true,
+   "toneMapping": "AgX",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.84 0.02 220)",
+   "oklch(0.74 0.03 200)",
+   "oklch(0.62 0.04 180)",
+   "oklch(0.5 0.04 200)",
+   "oklch(0.4 0.04 230)",
+   "oklch(0.32 0.04 250)"
+  ],
+  "ink": "#121820",
+  "accent": "#e07a3f",
+  "type": {
+   "display": "Newsreader",
+   "text": "Inter Tight",
+   "label": null,
+   "scale": "display clamp(3rem, 8vw, 8rem), italic for place names"
+  },
+  "shots": [
+   "wide",
+   "path",
+   "path",
+   "hero",
+   "macro",
+   "wide"
+  ],
+  "copy": [
+   "over",
+   "left",
+   "right",
+   "bottom",
+   "left",
+   "over"
+  ],
+  "motion": "a continuous glide along a CatmullRomCurve3, looking slightly ahead; ink switches to light as the grounds darken",
+  "texture": "grain 5%",
+  "signature": "the first frame: the land under fog, the destination a small light far away",
+  "avoid": [
+   "checkerboard terrain",
+   "fog in a different colour from the page",
+   "dark ink on the darkest grounds",
+   "milk: fog or haze over the subject; every frame needs a true dark and a saturated colour"
+  ],
+  "seenIn": [
+   "Explore Primland (aerial terrain flythrough with fog)"
+  ],
+  "finish": {
+   "hdri": [
+    "misty_pines",
+    "overcast_soil_puresky"
+   ],
+   "envIntensity": 0.7,
+   "ao": 1.5,
+   "bloom": 0.3,
+   "bloomThreshold": 0.9,
+   "vignette": 0.3,
+   "fog": 10,
+   "toneMapping": "AGX"
+  },
+  "assets": {
+   "fidelity": "either",
+   "props": [
+    "pine tree",
+    "rock"
+   ],
+   "surfaces": [
+    "forest ground",
+    "snow",
+    "rock"
+   ]
+  }
+ },
+ {
+  "id": "material-lab",
+  "name": "Material lab",
+  "for": [
+   "product",
+   "colourways",
+   "fashion",
+   "finishes"
+  ],
+  "mood": "Bright, precise, almost scientific. One object, a light ground that takes on the chosen colour, and the material is the hero.",
+  "world": "an infinite light studio cove, one object, a swatch rail; the ground tint follows the active colourway",
+  "light": {
+   "rig": "a big soft key + RoomEnvironment at 0.8; specular highlights matter",
+   "key": "#ffffff",
+   "rim": "#ffffff",
+   "hemiSky": "#ffffff",
+   "hemiGround": "#cfd3da",
+   "fog": false,
+   "toneMapping": "Neutral",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.94 0.012 250)",
+   "oklch(0.92 0.02 230)",
+   "oklch(0.93 0.015 20)",
+   "oklch(0.9 0.01 260)",
+   "oklch(0.94 0.012 250)",
+   "oklch(0.88 0.02 240)"
+  ],
+  "ink": "#111317",
+  "accent": "#ff4d2e",
+  "type": {
+   "display": "Geist",
+   "text": "Geist",
+   "label": "Geist Mono",
+   "scale": "display medium weight clamp(3rem, 9vw, 10rem), numbers huge"
+  },
+  "shots": [
+   "hero",
+   "macro",
+   "side",
+   "top",
+   "macro",
+   "hero-low"
+  ],
+  "copy": [
+   "bottom",
+   "left",
+   "right",
+   "over",
+   "left",
+   "bottom"
+  ],
+  "motion": "inertia: the object keeps a little spin after a drag and settles; colourway swaps crossfade the materials",
+  "texture": "none",
+  "signature": "the colourway switch: the ground and the light change with the material",
+  "avoid": [
+   "a grey floor with OrbitControls and nothing else",
+   "swatches that are not the real materials",
+   "milk: fog or haze over the subject; every frame needs a true dark and a saturated colour"
+  ],
+  "seenIn": [
+   "Oryzo by Lusion (real material response, inertia)"
+  ],
+  "finish": {
+   "hdri": [
+    "studio_small_09",
+    "wooden_studio_19"
+   ],
+   "envIntensity": 0.85,
+   "ao": 2.5,
+   "bloom": 0.3,
+   "bloomThreshold": 0.92,
+   "vignette": 0.25,
+   "fog": 0,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "photoreal",
+   "props": [],
+   "surfaces": [
+    "fabric",
+    "leather",
+    "metal",
+    "wood"
+   ]
+  }
+ },
+ {
+  "id": "pavilion",
+  "name": "Pavilion of rooms",
+  "for": [
+   "collection",
+   "event",
+   "multi-product",
+   "museum",
+   "brand"
+  ],
+  "mood": "Each chapter is a room with its own colour and light; the camera walks from door to door.",
+  "world": "rooms in a row or a ring, doorways framing the next room's colour, one item per room",
+  "light": {
+   "rig": "per room: a coloured area of light (RectAreaLight or a tinted hemisphere), warm practicals",
+   "key": "#ffe3c2",
+   "rim": "#ffffff",
+   "hemiSky": "room colour mixed 60% to white",
+   "hemiGround": "room colour mixed 50% to black",
+   "fog": false,
+   "toneMapping": "Neutral",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.35 0.08 30)",
+   "oklch(0.3 0.06 160)",
+   "oklch(0.28 0.07 260)",
+   "oklch(0.4 0.09 80)",
+   "oklch(0.32 0.07 330)",
+   "oklch(0.3 0.05 200)"
+  ],
+  "ink": "#f6efe6",
+  "accent": "#ffcf70",
+  "type": {
+   "display": "DM Serif Display",
+   "text": "DM Sans",
+   "label": null,
+   "scale": "display clamp(3rem, 8vw, 8.5rem)"
+  },
+  "shots": [
+   "wide",
+   "hero",
+   "macro",
+   "wide",
+   "hero-low",
+   "side"
+  ],
+  "copy": [
+   "over",
+   "left",
+   "right",
+   "bottom",
+   "over",
+   "left"
+  ],
+  "motion": "walk-throughs: the camera dollies through a doorway (fly-into) into the next room",
+  "texture": "grain 6%",
+  "signature": "a doorway on the first screen with the next room's colour glowing through it",
+  "avoid": [
+   "empty rooms",
+   "every room the same colour"
+  ],
+  "seenIn": [
+   "Cartier Watches & Wonders 2026 by Immersive Garden (six rooms, one per watch)"
+  ],
+  "finish": {
+   "hdri": [
+    "glasshouse_interior",
+    "kloofendal_48d_partly_cloudy_puresky"
+   ],
+   "envIntensity": 0.75,
+   "ao": 3,
+   "bloom": 0.3,
+   "bloomThreshold": 0.9,
+   "vignette": 0.3,
+   "fog": 12,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "photoreal",
+   "props": [
+    "plant",
+    "chair",
+    "bench",
+    "lamp"
+   ],
+   "surfaces": [
+    "terrazzo",
+    "concrete",
+    "wood floor"
+   ]
+  }
+ },
+ {
+  "id": "paper-world",
+  "name": "Paper world",
+  "for": [
+   "guide",
+   "education",
+   "wellness",
+   "kids",
+   "story"
+  ],
+  "mood": "A handmade diorama of paper and card: flat-shaded shapes, visible layers, soft pastels and gentle light.",
+  "world": "layered card planes, cut-out trees and figures, a paper texture on everything",
+  "light": {
+   "rig": "a soft key with long soft shadows between layers, a warm hemisphere",
+   "key": "#fff4e4",
+   "rim": null,
+   "hemiSky": "#fff2df",
+   "hemiGround": "#c9b8a8",
+   "fog": false,
+   "toneMapping": "Neutral",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.9 0.04 80)",
+   "oklch(0.86 0.05 150)",
+   "oklch(0.84 0.05 220)",
+   "oklch(0.86 0.05 20)",
+   "oklch(0.88 0.04 300)",
+   "oklch(0.9 0.04 80)"
+  ],
+  "ink": "#2b2220",
+  "accent": "#e2553d",
+  "type": {
+   "display": "Fraunces",
+   "text": "Rubik",
+   "label": null,
+   "scale": "display soft serif clamp(3rem, 8vw, 8rem)"
+  },
+  "shots": [
+   "wide",
+   "hero",
+   "side",
+   "macro",
+   "top",
+   "wide"
+  ],
+  "copy": [
+   "bottom",
+   "left",
+   "right",
+   "over",
+   "left",
+   "bottom"
+  ],
+  "motion": "layers slide apart like a pop-up book; nothing moves faster than a page turn",
+  "texture": "a paper texture on the ground and on the 3D (a CanvasTexture with fibres)",
+  "signature": "the scene unfolding like a pop-up book on the first scroll",
+  "avoid": [
+   "glossy materials",
+   "photoreal anything",
+   "milk: fog or haze over the subject; every frame needs a true dark and a saturated colour"
+  ],
+  "seenIn": [
+   "Sleep Well Creative (an illustrated 3D world you scroll through)"
+  ],
+  "finish": {
+   "hdri": [
+    "studio_kontrast_04",
+    "pav_studio_03"
+   ],
+   "envIntensity": 0.8,
+   "ao": 3.5,
+   "bloom": 0.1,
+   "bloomThreshold": 0.98,
+   "vignette": 0.2,
+   "fog": 0,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "stylised",
+   "props": [],
+   "surfaces": []
+  }
+ },
+ {
+  "id": "type-space",
+  "name": "Type in space",
+  "for": [
+   "studio",
+   "event",
+   "brand",
+   "launch"
+  ],
+  "mood": "The name is the object. Letters built in 3D, and the camera moves through and around them.",
+  "world": "3D letters (TextGeometry from a typeface JSON, or extruded SVG paths), a few real artefacts between them",
+  "light": {
+   "rig": "a strong key and rim to carve the letter edges, an environment for the bevels",
+   "key": "#ffffff",
+   "rim": "var(--accent)",
+   "hemiSky": "ground mixed 70% to white",
+   "hemiGround": "ground mixed 50% to black",
+   "fog": true,
+   "toneMapping": "Neutral",
+   "exposure": 1.0
+  },
+  "grounds": [
+   "oklch(0.22 0.03 30)",
+   "oklch(0.86 0.04 90)",
+   "oklch(0.25 0.05 260)",
+   "oklch(0.6 0.15 30)",
+   "oklch(0.22 0.03 30)",
+   "oklch(0.86 0.04 90)"
+  ],
+  "ink": "#f5efe6",
+  "accent": "#ff6a3d",
+  "type": {
+   "display": "Anton",
+   "text": "Hanken Grotesk",
+   "label": null,
+   "scale": "HTML type stays small; the 3D letters carry the scale"
+  },
+  "shots": [
+   "hero",
+   "macro",
+   "side",
+   "top",
+   "wide",
+   "hero-low"
+  ],
+  "copy": [
+   "bottom",
+   "left",
+   "right",
+   "bottom",
+   "over",
+   "left"
+  ],
+  "motion": "the camera threads between letters; letters assemble from pieces on the first scroll",
+  "texture": "grain 6%",
+  "signature": "the name in 3D on the first screen, readable at its rest pose",
+  "avoid": [
+   "unreadable angles at rest",
+   "chrome text"
+  ],
+  "seenIn": [
+   "Shopify Editions (type that scatters and reforms)",
+   "studio sites with 3D wordmarks"
+  ],
+  "finish": {
+   "hdri": [
+    "studio_small_08",
+    "studio_small_03"
+   ],
+   "envIntensity": 0.6,
+   "ao": 2,
+   "bloom": 0.3,
+   "bloomThreshold": 0.92,
+   "vignette": 0.35,
+   "fog": 0,
+   "toneMapping": "NEUTRAL"
+  },
+  "assets": {
+   "fidelity": "stylised",
+   "props": [],
+   "surfaces": []
+  }
+ }
+]
