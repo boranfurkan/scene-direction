@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="examples/banner.jpg" alt="scene-direction: four 3D websites built by an agent with the skill: a headphones launch, a violin maker, a kettle launch and a vineyard" width="100%">
+  <img src="examples/banner.jpg" alt="scene-direction: four 3D websites built by an agent with the skill: a synthesizer launch, a watch launch, a ryokan and a headphones launch" width="100%">
 </p>
 
 <h3 align="center">Award-level 3D websites from your coding agent.</h3>
@@ -15,24 +15,42 @@
 
 <table>
   <tr>
-    <td width="50%"><img src="examples/headphones.gif" alt="Scrolling the headphones launch: the frame comes apart with callouts, the cushion in macro, rings for six microphones, a battery ring, the colourways"></td>
-    <td width="50%"><img src="examples/violin.gif" alt="Scrolling the violin maker's site: a night gallery with three instruments on lit plinths under tall windows"></td>
+    <td width="50%"><img src="examples/synth.gif" alt="Scrolling the Pulse-8 synthesizer launch: an orange panel with 42 knobs, a 64-step sequencer that lights up, walnut sides, a filter you can play"></td>
+    <td width="50%"><img src="examples/watch.gif" alt="Scrolling the Meridian Calibre 01 watch launch: the steel case, the blue dial, the movement in macro through the caseback, winding the crown"></td>
   </tr>
   <tr>
+    <td><b>Pulse-8</b>, an analogue synthesizer. Dealt <i>Product noir</i>: the orange panel glows in a deep blue studio, the sequencer lights step by step, and the filter plays a sound you can shape.</td>
+    <td><b>Meridian Calibre 01</b>, a mechanical watch. Dealt <i>Material lab</i>: steel, sapphire and a hand-finished movement up close, and you hold a button to wind it.</td>
+  </tr>
+  <tr>
+    <td><img src="examples/ryokan.gif" alt="Scrolling the Yugen ryokan site: a stone path through cedars at dusk, lanterns, tatami rooms, seven rooms on a map, dinner and breakfast"></td>
+    <td><img src="examples/headphones.gif" alt="Scrolling the headphones launch: the frame comes apart with callouts, the cushion in macro, rings for six microphones, a battery ring, the colourways"></td>
+  </tr>
+  <tr>
+    <td><b>Yūgen</b>, a ryokan in the forest above Hakone. Dealt <i>Golden hour</i>: the camera walks the stone path through the cedars, past the lanterns, into the rooms.</td>
     <td><b>Tessel One</b>, a headphones launch. Dealt <i>Blueprint</i>: the headphones come apart like an engineering drawing, every part labelled with a real fact.</td>
-    <td><b>Sofia Brandt</b>, a violin maker. Dealt <i>Night gallery</i>: each instrument stands in its own pool of light, with the making told in numbers.</td>
   </tr>
   <tr>
+    <td><img src="examples/violin.gif" alt="Scrolling the violin maker's site: a night gallery with three instruments on lit plinths under tall windows"></td>
     <td><img src="examples/kettle.gif" alt="Scrolling the kettle launch: the lid thermometer, the pour into a dripper, the exploded anatomy, the hob"></td>
-    <td align="center"><img src="examples/vineyard-phone.gif" alt="Scrolling the vineyard site on a phone" width="300"></td>
   </tr>
   <tr>
+    <td><b>Sofia Brandt</b>, a violin maker. Dealt <i>Night gallery</i>: each instrument stands in its own pool of light, with the making told in numbers.</td>
     <td><b>Kova</b>, a kettle launch. The thermometer climbs as you scroll, the gooseneck pours into a dripper, and the kettle comes apart into its five parts.</td>
-    <td><b>Quinta da Vinha Alta</b>, a vineyard in the Douro valley, on a phone. Dealt <i>Golden hour</i>: dusk to night over the terraces.</td>
   </tr>
 </table>
 
-<p align="center"><sub>Every site here was built by an agent with the skill, from a one-paragraph brief. No design input, no hand edits.</sub></p>
+<p align="center"><b>And on a phone</b>, every scene is refitted for portrait:</p>
+
+<table>
+  <tr>
+    <td width="33%" align="center"><img src="examples/synth-phone.gif" alt="The synthesizer site on a phone" width="260"></td>
+    <td width="33%" align="center"><img src="examples/ryokan-phone.gif" alt="The ryokan site on a phone" width="260"></td>
+    <td width="33%" align="center"><img src="examples/vineyard-phone.gif" alt="A vineyard site in the Douro valley on a phone" width="260"></td>
+  </tr>
+</table>
+
+<p align="center"><sub>Every site here was built by an agent with the skill, from a one-paragraph brief, with no design input.</sub></p>
 
 ## Why
 
