@@ -27,7 +27,7 @@
     <td><img src="examples/headphones.gif" alt="Scrolling the headphones launch: the frame comes apart with callouts, the cushion in macro, rings for six microphones, a battery ring, the colourways"></td>
   </tr>
   <tr>
-    <td><b>Yūgen</b>, a ryokan in the forest above Hakone. Dealt <i>Golden hour</i>: the camera walks the stone path through the cedars, past the lanterns, into the rooms.</td>
+    <td><b>Yūgen</b>, a ryokan in the forest above Hakone. Dealt <i>Golden hour</i>: the camera flies through the cedars to the timber gate at dusk, then on to the rooms, dinner and the moss garden.</td>
     <td><b>Tessel One</b>, a headphones launch. Dealt <i>Blueprint</i>: the headphones come apart like an engineering drawing, every part labelled with a real fact.</td>
   </tr>
   <tr>
